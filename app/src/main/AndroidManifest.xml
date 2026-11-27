@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- CAMERA権限は宣言しない（宣言すると標準カメラ呼び出しに許可が必要になるため） -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_app"
+        android:label="名刺登録"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <provider
+            android:name=".PhotoProvider"
+            android:authorities="jp.cranberry.meishi.photo"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+        <receiver
+            android:name=".Updater"
+            android:exported="false" />
+    </application>
+</manifest>
