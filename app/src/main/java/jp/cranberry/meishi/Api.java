@@ -11,8 +11,8 @@ import java.nio.charset.StandardCharsets;
 
 /** 台帳（Google Apps Script）との通信。通信するので別スレッドで呼ぶ。 */
 public class Api {
-    /** GASをウェブアプリとしてデプロイしたURL（/exec で終わるもの）に置き換える */
-    static final String ENDPOINT = "https://script.google.com/macros/s/ここにデプロイURLのID/exec";
+    /** 名刺台帳システム（GAS）のウェブアプリURL */
+    static final String ENDPOINT = "https://script.google.com/macros/s/AKfycbwNKzGJCsD-wg4MIfaJ-EHCfjIEjz1Uf-cZsnlyITRMl0Z6stguFEqtKVn29VW0onSbJQ/exec";
 
     private static String read(InputStream in) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
