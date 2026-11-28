@@ -190,7 +190,7 @@ public class MainActivity extends Activity {
         c.addView(name);
         label(c, "合言葉（事務から案内されたもの）");
         final EditText token = edit(prefs.getString("token", ""), "合言葉");
-        token.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        token.setInputType(InputType.TYPE_CLASS_TEXT); // 日本語の合言葉も入力できるようにする
         c.addView(token);
         final Button ok = btn("保存して始める", true);
         box.addView(ok, lp(16));
