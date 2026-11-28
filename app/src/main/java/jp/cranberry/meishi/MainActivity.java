@@ -96,6 +96,38 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (!updateAsked) checkUpdateDialog();
+        sendHello();
+    }
+
+    private boolean helloSent;
+
+    private String versionName() {
+        try {
+            return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /** 起動したことを台帳の「利用状況」に知らせる（名前・アプリの版・端末のみ）。 */
+    private void sendHello() {
+        if (helloSent) return;
+        final String n = prefs.getString("name", "");
+        if (n.isEmpty() || prefs.getString("token", "").isEmpty()) return;
+        helloSent = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject o = base("hello");
+                    o.put("name", n);
+                    o.put("vn", versionName());
+                    o.put("model", android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL);
+                    Api.post(o);
+                } catch (Exception ignored) {
+                }
+            }
+        }).start();
     }
 
     /** 新しい版があれば、どの画面にいても更新を案内する（初回設定の画面でも更新できるように）。 */
@@ -260,6 +292,9 @@ public class MainActivity extends Activity {
                             JSONObject o = new JSONObject();
                             o.put("action", "ping");
                             o.put("token", t);
+                            o.put("name", n);
+                            o.put("vn", versionName());
+                            o.put("model", android.os.Build.MANUFACTURER + " " + android.os.Build.MODEL);
                             r = Api.post(o);
                         } catch (Exception e) {
                             r = new JSONObject();
