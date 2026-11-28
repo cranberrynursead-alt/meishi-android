@@ -89,6 +89,51 @@ public class MainActivity extends Activity {
         else showHome();
     }
 
+    private boolean updateAsked;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!updateAsked) checkUpdateDialog();
+    }
+
+    /** 新しい版があれば、どの画面にいても更新を案内する（初回設定の画面でも更新できるように）。 */
+    private void checkUpdateDialog() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String[] v = Updater.latest();
+                if (v == null) return;
+                long code;
+                try {
+                    code = Long.parseLong(v[0]);
+                } catch (Exception e) {
+                    return;
+                }
+                if (code <= Updater.currentCode(MainActivity.this)) return;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinishing() || updateAsked) return;
+                        updateAsked = true;
+                        new android.app.AlertDialog.Builder(MainActivity.this)
+                                .setTitle("新しいバージョンがあります")
+                                .setMessage("バージョン " + v[1] + " に更新できます。今すぐ更新しますか？")
+                                .setPositiveButton("更新する", new android.content.DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(android.content.DialogInterface d, int w) {
+                                        updateAsked = false;
+                                        Updater.start(MainActivity.this);
+                                    }
+                                })
+                                .setNegativeButton("あとで", null)
+                                .show();
+                    }
+                });
+            }
+        }).start();
+    }
+
     // ---------- 部品 ----------
     private int dp(int v) {
         return (int) (v * getResources().getDisplayMetrics().density + 0.5f);
@@ -297,7 +342,6 @@ public class MainActivity extends Activity {
         });
         box.addView(tv("名刺は明るい場所で、机に置いて真上から撮るときれいに読み取れます。", 14, false, MUTED), lp(14));
         addMsg();
-        checkUpdate();
     }
 
     private void openCamera() {
